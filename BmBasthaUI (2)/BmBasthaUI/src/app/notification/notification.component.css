@@ -1,0 +1,74 @@
+/* Container for the whole form section */
+.notification-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Main heading */
+.main-heading {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #91D477;
+    padding-bottom: 8px;
+    text-align: left;
+}
+
+/* Form layout */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Field block */
+.form-field {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Labels */
+.form-field label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #34495e;
+    font-size: 15px;
+}
+
+/* Inputs */
+.form-field input {
+    padding: 12px;
+    border: 1.8px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+    background-color: #fefefe;
+}
+
+.form-field input:focus {
+    border-color: #91D477;
+    outline: none;
+}
+
+/* Submit button */
+.submit-button {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    background-color: #91D477;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #7ABC5E;
+}

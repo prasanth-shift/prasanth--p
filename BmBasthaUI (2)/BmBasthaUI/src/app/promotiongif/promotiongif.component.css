@@ -1,0 +1,79 @@
+.promotional-gif-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.promotional-gif-heading {
+    font-size: 26px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #91D477;
+    padding-bottom: 6px;
+}
+
+.gif-url-container,
+.status-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+label {
+    font-weight: 600;
+    color: #34495e;
+    font-size: 15px;
+}
+
+input[type="text"],
+select {
+    padding: 12px;
+    border: 1.8px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+    width: 100%;
+}
+
+input[type="text"]:focus,
+select:focus {
+    border-color: #91D477;
+    outline: none;
+}
+
+select {
+    background-color: #fff;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.25rem;
+    padding-right: 2rem;
+}
+
+/* Save button */
+.rounded-button {
+    align-self: flex-start;
+    background-color: #91D477;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.rounded-button:hover {
+    background-color: #7ABC5E;
+}
