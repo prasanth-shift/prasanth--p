@@ -1,0 +1,162 @@
+<div class="delivery-container">
+  <!-- Loading and Error -->
+  <div *ngIf="isLoading" class="loading">Loading...</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <!-- Header + Search -->
+  <div class="header-section">
+    <h2>Delivery</h2>
+    <div class="search-box-container">
+      <input
+        type="text"
+        placeholder="Search by Order ID"
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="searchByQuery()"
+        class="search-box"
+      />
+      <button (click)="searchByQuery()" class="search-btn">Search</button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-section">
+    <!-- Pincode -->
+    <div class="dropdown-container">
+      <button class="dropdown-btn" (click)="openPincodeDropdown()">
+        Pincode: {{ area || 'All' }}
+        <span class="arrow">↓</span>
+      </button>
+      <div class="dropdown-content" *ngIf="showPincodeDropdown">
+        <ul class="suggestions">
+          <li *ngFor="let p of pincodeSuggestions" (click)="selectPincode(p)">
+            {{ p }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Limit -->
+    <div class="dropdown-container">
+      <button class="dropdown-btn" (click)="openLimitDropdown()">
+        Limit: {{ limit || 'All' }}
+        <span class="arrow">↓</span>
+      </button>
+      <div class="dropdown-content" *ngIf="showLimitDropdown">
+        <ul class="suggestions">
+          <li *ngFor="let n of limitOptions" (click)="selectLimit(n)">
+            {{ n }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="dropdown-container">
+      <button class="dropdown-btn" (click)="openStatusDropdown()">
+        Status: {{ status || 'All' }}
+        <span class="arrow">↓</span>
+      </button>
+      <div class="dropdown-content" *ngIf="showStatusDropdown">
+        <ul class="suggestions">
+          <li (click)="selectStatus('')">All</li>
+          <li *ngFor="let s of statusOptions" (click)="selectStatus(s)">
+            {{ s }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Orders -->
+  <div *ngIf="!isLoading && orders.length === 0" class="no-orders">
+    No orders found. Try adjusting your search criteria.
+  </div>
+
+  <!-- Orders Table -->
+  <table class="orders-table" *ngIf="!isLoading && orders.length > 0">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>User ID</th>
+        <th>Status</th>
+        <th>Total Price</th>
+        <th>Ordered Date</th>
+        <th>Delivery Address</th>
+        <th>Payment Method</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let o of orders; trackBy: trackByOrderId">
+        <td>{{ o.order_id }}</td>
+        <td>{{ o.uid }}</td>
+        <td>{{ o.order_status }}</td>
+        <td>{{ o.price | currency }}</td>
+        <td>{{ o.ordered_date | date: 'short' }}</td>
+        <td>{{ o.delivery_address }}</td>
+        <td>{{ o.payment_method }}</td>
+        <td class="action-buttons">
+          <button (click)="assignDelivery(o)" class="assign-btn">Assign</button>
+          <button (click)="openUpdateStatus(o)" class="update-btn">Update</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Agent Modal -->
+  <div class="agent-card" *ngIf="showAgentCard">
+    <div class="card-header">
+      <h3>Available Agents</h3>
+      <button class="close-btn" (click)="showAgentCard = false">×</button>
+    </div>
+    <table class="agents-table">
+      <tr>
+        <th>Name</th>
+        <th>ID</th>
+        <th>Mobile</th>
+        <th>Action</th>
+      </tr>
+      <tr *ngFor="let a of agents; trackBy: trackByAgentId">
+        <td>{{ a.name }}</td>
+        <td>{{ a.id }}</td>
+        <td>{{ a.mobile }}</td>
+        <td><button (click)="confirmAssignment(a)">Assign</button></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Status Modal -->
+  <div class="status-card" *ngIf="showStatusCard">
+    <div class="card-header">
+      <h3>Update Status</h3>
+      <button class="close-btn" (click)="showStatusCard = false">×</button>
+    </div>
+    <form (ngSubmit)="updateOrderStatus()">
+      <p><b>Order ID:</b>{{selectedOrder.uid}}</p>
+      <p><b>Customer Name:</b>{{user.name}}</p>
+      <p><b>Phone:</b>{{user.altMobile}}</p>
+      <hr style="border:none;height :1px;background-color:#4AC41B;">
+      <label style="color:grey;">New Status:</label>
+      <select [(ngModel)]="selectedOrder.status" name="status">
+        <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+      </select>
+      <hr style="border:none;height :1px;background-color:#4AC41B;">
+      <h style="color:grey;">Shipping info</h>
+      <p><b>Delivery Address:</b>{{selectedOrder.delivery}}</p>
+      <hr style="border:none;height :1px;background-color:#4AC41B;">
+      <h style="color:grey;">Payment info</h>
+      <hr style="border:none;height :1px;background-color:#4AC41B;">
+  
+<div *ngIf="otpSent">
+  <h3>OTP Verification</h3>
+
+  <input type="text" [(ngModel)]="otpForm.value.otp" placeholder="Enter OTP" />
+
+ 
+  <button (click)="verifyOtp()" [disabled]="!otpForm.valid">Verify OTP</button>
+</div>
+
+<button *ngIf="!otpSent" (click)="sendOtp()">Send OTP</button>
+    </form>
+  </div>
+</div>
