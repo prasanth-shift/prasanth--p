@@ -1,8 +1,0 @@
-{
-  "/api": {
-    "target": "http://server.bmbastha.com",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug"
-  }
-}
