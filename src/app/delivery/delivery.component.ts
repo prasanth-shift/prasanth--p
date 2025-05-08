@@ -20,7 +20,7 @@ export class DeliveryComponent implements OnInit {
   area: number | null = null;
   status = '';
   limit: number | null = null;
-  user:any=null;
+  user: any = null;
   orders: any[] = [];
   agents: any[] = [];
   pincodeSuggestions: number[] = [];
@@ -34,12 +34,10 @@ export class DeliveryComponent implements OnInit {
   selectedOrderId: number | null = null;
   selectedOrder: any = null;
 
-
   otpForm: FormGroup;
   otpSent = false;
-  otp: string = ''; // Property to store OTP
+  otp: string = ''; 
 
- 
   statusOptions = [
     'waiting',
     'order_failed',
@@ -60,14 +58,13 @@ export class DeliveryComponent implements OnInit {
   errorMessage: string | null = null;
   isLoading = false;
 
-
   constructor(
     private fb: FormBuilder,
     private deliveryService: DeliveryService,
     private cdr: ChangeDetectorRef,
-    private http: HttpClient,          // Inject HttpClient here
-    private router: Router,            // Inject Router here
-    private cookieService: CookieService // Inject CookieService here
+    private http: HttpClient,
+    private router: Router,
+    private cookieService: CookieService
   ) {
     this.otpForm = this.fb.group({
       otp: ['', Validators.required]
@@ -79,7 +76,6 @@ export class DeliveryComponent implements OnInit {
     this._loadOrders();
   }
 
-  // Search button
   searchByQuery() {
     console.log('searchByQuery called with query:', this.searchQuery);
     this.errorMessage = null;
@@ -94,9 +90,7 @@ export class DeliveryComponent implements OnInit {
     this.orderIdSearch = q; 
     this._loadOrders();
   }
-  
 
-  // Load orders
   private _loadOrders() {
     console.log('Loading orders with params:', {
       orderIdSearch: this.orderIdSearch,
@@ -107,13 +101,12 @@ export class DeliveryComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
     const params: string[] = [];
-    if (this.orderIdSearch) params.push(`order_id='${this.orderIdSearch}'`);
+    if (this.orderIdSearch) params.push(`order_id=${this.orderIdSearch}`);
     if (this.area !== null) params.push(`area=${this.area}`);
     if (this.status) params.push(`status=${this.status}`);
     if (this.limit !== null) params.push(`limit=${this.limit}`);
     const qs = params.length ? `?${params.join('&')}` : '';
     const url = `/api/delivery/admin/order${qs}`;
-    console.log(url)
     console.log('Fetching orders from URL:', url);
     this.deliveryService.getOrders(url).subscribe({
       next: (r) => {
@@ -135,7 +128,6 @@ export class DeliveryComponent implements OnInit {
     });
   }
 
-  // Dropdown toggles
   openPincodeDropdown() {
     console.log('Pincode dropdown clicked');
     this.showPincodeDropdown = !this.showPincodeDropdown;
@@ -199,13 +191,12 @@ export class DeliveryComponent implements OnInit {
 
   selectStatus(s: string) {
     console.log('Status selected:', s);
-    this.status = s; // Fixed typo: was INVALID_ESCAPED_KEYWORD
+    this.status = s;
     this.showStatusDropdown = false;
     this._loadOrders();
     this.cdr.detectChanges();
   }
 
-  // Assign button
   assignDelivery(order: any) {
     console.log('Assign clicked for order:', order.id);
     if (this.area === null) {
@@ -270,18 +261,20 @@ export class DeliveryComponent implements OnInit {
       });
   }
 
-  // Update button
   openUpdateStatus(order: any) { 
     console.log('Update clicked for order:', order.id);
-    console.log("user id ",":",order)
-    this.selectedOrder = { id: order.id, status: order.order_status,uid: order.uid ,delivery:order.delivery_address};
-  //  this.prasanth = order.uid;
-   this.fetchItems();
+    this.selectedOrder = { id: order.id, status: order.order_status, uid: order.uid, delivery: order.delivery_address };
+    this.fetchItems();
     this.showStatusCard = true;
     this.cdr.detectChanges();
   }
 
   updateOrderStatus() {
+    if (!this.selectedOrder || !this.selectedOrder.id || !this.selectedOrder.status) {
+      this.errorMessage = 'Invalid order or status';
+      this.cdr.detectChanges();
+      return;
+    }
     
     console.log('Update status submitted:', this.selectedOrder);
     this.isLoading = true;
@@ -308,7 +301,6 @@ export class DeliveryComponent implements OnInit {
     });
   }
 
-  // TrackBy functions
   trackByOrderId(index: number, order: any): number {
     return order.id;
   }
@@ -316,12 +308,11 @@ export class DeliveryComponent implements OnInit {
   trackByAgentId(index: number, agent: any): number {
     return agent.id;
   }
+
   fetchItems() {
-    console.log(this.prasanth);
     this.deliveryService.getUser(this.selectedOrder.uid).subscribe(
       (response) => {
         console.log('Items fetched:', response);
-
         this.user = response.data;
         console.log(this.user);
       },
@@ -331,7 +322,4 @@ export class DeliveryComponent implements OnInit {
       }
     );
   }
-  
 }
-
-

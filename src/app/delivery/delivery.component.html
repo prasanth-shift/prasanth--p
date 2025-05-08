@@ -127,36 +127,32 @@
 
   <!-- Status Modal -->
   <div class="status-card" *ngIf="showStatusCard">
-    <div class="card-header">
+    <div class=" (‘card-header’">
       <h3>Update Status</h3>
       <button class="close-btn" (click)="showStatusCard = false">×</button>
     </div>
     <form (ngSubmit)="updateOrderStatus()">
-      <p><b>Order ID:</b>{{selectedOrder.uid}}</p>
-      <p><b>Customer Name:</b>{{user.name}}</p>
-      <p><b>Phone:</b>{{user.altMobile}}</p>
-      <hr style="border:none;height :1px;background-color:#4AC41B;">
+      <p><b>Order ID:</b> {{ selectedOrder.uid }}</p>
+      <p><b>Customer Name:</b> {{ user?.name }}</p>
+      <p><b>Phone:</b> {{ user?.altMobile }}</p>
+      <hr style="border:none;height:1px;background-color:#4AC41B;">
       <label style="color:grey;">New Status:</label>
       <select [(ngModel)]="selectedOrder.status" name="status">
         <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
       </select>
-      <hr style="border:none;height :1px;background-color:#4AC41B;">
+      <hr style="border:none;height:1px;background-color:#4AC41B;">
       <h style="color:grey;">Shipping info</h>
-      <p><b>Delivery Address:</b>{{selectedOrder.delivery}}</p>
-      <hr style="border:none;height :1px;background-color:#4AC41B;">
+      <p><b>Delivery Address:</b> {{ selectedOrder.delivery }}</p>
+      <hr style="border:none;height:1px;background-color:#4AC41B;">
       <h style="color:grey;">Payment info</h>
-      <hr style="border:none;height :1px;background-color:#4AC41B;">
-  
-<div *ngIf="otpSent">
-  <h3>OTP Verification</h3>
-
-  <input type="text" [(ngModel)]="otpForm.value.otp" placeholder="Enter OTP" />
-
- 
-  <button (click)="verifyOtp()" [disabled]="!otpForm.valid">Verify OTP</button>
-</div>
-
-<button *ngIf="!otpSent" (click)="sendOtp()">Send OTP</button>
+      <hr style="border:none;height:1px;background-color:#4AC41B;">
+      <div *ngIf="otpSent">
+        <h3>OTP Verification</h3>
+        <input type="text" [(ngModel)]="otpForm.value.otp" placeholder="Enter OTP" name="otp" />
+        <button (click)="verifyOtp()" [disabled]="!otpForm.valid">Verify OTP</button>
+      </div>
+      <button *ngIf="!otpSent" (click)="sendOtp()">Send OTP</button>
+      <button type="submit" class="update-btn">Update</button>
     </form>
   </div>
 </div>

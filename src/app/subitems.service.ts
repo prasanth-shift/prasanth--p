@@ -14,4 +14,8 @@ export class SubitemsService {
   addSubItem(subItem: any): Observable<any> {
     return this.http.put(`${this.baseUrl}/api/admin/item/add/sub_item`, subItem);
   }
+
+  deleteSubItem(id: number) {
+    return this.http.delete(`${this.baseUrl}/api/admin/sub_item/remove/${id}`);
+  }
 }

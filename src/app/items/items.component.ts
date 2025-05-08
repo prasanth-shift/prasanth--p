@@ -50,12 +50,13 @@ export class ItemsComponent implements OnInit {
     private subitemsService: SubitemsService
   ) {
     this.itemForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      description: ['', Validators.required],
-      category: ['', Validators.required],
-      brandId: ['', Validators.required],
-      isOrganic: ['', Validators.required],
-      supplierId: ['', Validators.required]
+      name: [''],
+      description: [''],
+      category: [''],
+      brandId: [''],
+      images: [''],
+      isOrganic: [],
+      supplierId: ['']
     });
 
     this.subItemForm = this.formBuilder.group({
@@ -75,6 +76,7 @@ export class ItemsComponent implements OnInit {
       description: ['', Validators.required],
       category: ['', Validators.required],
       brandId: ['', Validators.required],
+      images: [''],
       isOrganic: ['', Validators.required],
       supplierId: ['', Validators.required]
     });
@@ -85,6 +87,7 @@ export class ItemsComponent implements OnInit {
       (response) => {
         console.log('Suppliers fetched:', response);
         this.suppliers = response.data;
+        console.log('Supplier IDs:', this.suppliers.map(s => s.sid));
       },
       (error) => {
         console.error('Error fetching suppliers:', error);
@@ -100,6 +103,7 @@ export class ItemsComponent implements OnInit {
       (response) => {
         console.log('Items fetched:', response);
         this.items = response.data;
+        console.log('Items data:', JSON.stringify(this.items, null, 2));
       },
       (error) => {
         console.error('Error fetching items:', error);
@@ -119,31 +123,35 @@ export class ItemsComponent implements OnInit {
       }
     );
   }
-    openAddPincodeCard(itemId: number) {
+
+  openAddPincodeCard(itemId: number) {
     this.selectedItemId = itemId;
     this.showAddPincodeCard = true;
     this.pincodeForm.patchValue({
       itemId: itemId
     });
   }
-   closeAddPincodeCard() {
+
+  closeAddPincodeCard() {
     this.showAddPincodeCard = false;
     this.pincodeForm.reset();
   }
+
   filterPincodes(searchText: string) {
-     console.log("Search Text:", this.searchText);
+    console.log("Search Text:", this.searchText);
 
-  if (!this.searchText || !this.searchText.trim()) {
-    this.filteredPincodes = [...this.pincodes]; // Reset filter
-    return;
+    if (!this.searchText || !this.searchText.trim()) {
+      this.filteredPincodes = [...this.pincodes]; // Reset filter
+      return;
+    }
+
+    this.filteredPincodes = this.pincodes.filter((pincode) =>
+      pincode.toString().includes(this.searchText.trim())
+    );
+
+    console.log("Filtered Pincodes:", this.filteredPincodes);
   }
 
-  this.filteredPincodes = this.pincodes.filter((pincode) =>
-    pincode.toString().includes(this.searchText.trim())
-  );
-
-  console.log("Filtered Pincodes:", this.filteredPincodes);
-  }
   togglePincodeSelection(pincode: string) {
     if (this.selectedPincodes.has(pincode)) {
       this.selectedPincodes.delete(pincode);
@@ -154,14 +162,8 @@ export class ItemsComponent implements OnInit {
   }
 
   onPincodeFocus() {
-  this.showSuggestions = !this.showSuggestions;
-}
-
-  // onPincodeBlur() {
-  //   setTimeout(() => {
-  //     this.showSuggestions = false;
-  //   }, 200);
-  // }
+    this.showSuggestions = !this.showSuggestions;
+  }
 
   onAddPincode() {
     if (this.selectedPincodes.size === 0) {
@@ -296,6 +298,33 @@ export class ItemsComponent implements OnInit {
     this.subItemForm.reset();
   }
 
+  deleteSubItem(iquId: number) {
+    if (!confirm('Are you sure you want to delete this sub-item?')) {
+      return;
+    }
+
+    this.subitemsService.deleteSubItem(iquId).subscribe(
+      () => {
+        alert('Sub-item deleted successfully!');
+        if (this.selectedItemId) {
+          this.itemsService.getSubItemDetails(this.selectedItemId).subscribe(
+            (response) => {
+              this.subItems = response.data;
+            },
+            (error) => {
+              console.error('Error fetching sub-items:', error);
+              alert('Failed to refresh sub-items.');
+            }
+          );
+        }
+      },
+      (error) => {
+        console.error('Error deleting sub-item:', error);
+        alert('Failed to delete sub-item. Please try again.');
+      }
+    );
+  }
+
   onUpdateSubItem() {
     if (this.subItemForm.invalid) {
       alert('Please fill in all the required fields.');
@@ -339,25 +368,63 @@ export class ItemsComponent implements OnInit {
   }
 
   fetchItemToEdit(itemId: number) {
+    if (!itemId || isNaN(itemId)) {
+      console.error('Invalid itemId:', itemId);
+      alert('Invalid Item ID. Please try again.');
+      this.itemToEdit = {};
+      this.showEditItemCard = true; // Keep card open for manual entry
+      return;
+    }
+
+    // Check if item exists in local items array
+    const itemExists = this.items.some(item => item.item_id === itemId);
+    if (!itemExists) {
+      console.warn(`Item with ID ${itemId} not found in local items list.`);
+      alert('Item not found in the list. You can still edit the form manually.');
+      this.itemToEdit = {};
+      this.showEditItemCard = true; // Keep card open for manual entry
+      return;
+    }
+
+    console.log(`Fetching item details for itemId: ${itemId}`);
     this.itemsService.getItem(itemId).subscribe(
       (response) => {
         console.log('Item fetched:', response);
-        this.itemToEdit = response.data[0] || {};
+        if (!response || !response.data) {
+          console.error('Invalid response structure:', response);
+          alert('Failed to load item details: No data returned. Please fill in the form manually.');
+          this.itemToEdit = {};
+          this.showEditItemCard = true; // Keep card open
+          return;
+        }
+
+        const itemData = Array.isArray(response.data) && response.data.length > 0 ? response.data[0] : response.data;
+        this.itemToEdit = itemData || {};
+
         this.ItemEditForm.patchValue({
           name: this.itemToEdit.item_name || '',
           description: this.itemToEdit.description || '',
           category: this.itemToEdit.category || '',
           brandId: this.itemToEdit.brand_id || '',
+          images: Array.isArray(this.itemToEdit.images) ? this.itemToEdit.images.join(', ') : this.itemToEdit.images || '',
           isOrganic: this.itemToEdit.isorganic != null ? this.itemToEdit.isorganic.toString() : 'false',
           supplierId: this.itemToEdit.supplier_id || ''
         });
+
         console.log('Form patched with:', this.ItemEditForm.value);
       },
       (error) => {
         console.error('Error fetching item details:', error);
-        alert('Failed to load item details. You can still edit the form.');
+        let errorMessage = 'Failed to load item details. You can still edit the form manually.';
+        if (error.status === 400 && error.error?.message) {
+          errorMessage = `Failed to load item details: ${error.error.message}`;
+        } else if (error.status) {
+          errorMessage = `Failed to load item details: HTTP ${error.status} - ${error.statusText}`;
+        }
+        console.error('Full error response:', JSON.stringify(error, null, 2));
+        alert(errorMessage);
         this.itemToEdit = {};
-        this.ItemEditForm.reset();
+        this.showEditItemCard = true; // Ensure Edit Item Card remains open
       }
     );
   }
@@ -367,6 +434,7 @@ export class ItemsComponent implements OnInit {
     if (!itemId || isNaN(itemId)) {
       console.error('Invalid itemId:', itemId);
       alert('Invalid item ID. Please try again.');
+      this.showEditItemCard = true; // Open card for manual entry
       return;
     }
     this.selectedItemId = itemId;
@@ -376,10 +444,11 @@ export class ItemsComponent implements OnInit {
   }
 
   closeEditItemCard() {
-    console.log('Closing Edit Item Card');
+    console.log('Closing Edit Item Card', new Error().stack); // Log stack trace for debugging
     this.showEditItemCard = false;
     this.ItemEditForm.reset();
     this.selectedItemId = null;
+    this.itemToEdit = {};
   }
 
   onUpdateItem() {
@@ -412,73 +481,62 @@ export class ItemsComponent implements OnInit {
       return;
     }
 
+    const imageUrls = formValue.images
+      ? formValue.images.split(',').map((url: string) => url.trim()).filter((url: string) => {
+          return url === '' || /^(https?:\/\/[^\s$.?#].[^\s]*)$/.test(url);
+        })
+      : [];
+
     const updatedItem = {
       item_id: this.selectedItemId,
-      item_name: formValue.name.trim(),
+      name: formValue.name.trim(),
       description: formValue.description.trim(),
       category: formValue.category.trim(),
       brand_id: brandId,
-      isorganic: formValue.isOrganic === 'true' ? 1 : 0,
+      images: imageUrls,
+      isorganic: formValue.isOrganic === 'true',
       supplier_id: supplierId
     };
 
     console.log('Form values:', formValue);
-    console.log('Sending update payload:', updatedItem);
+    console.log('Sending update payload:', JSON.stringify(updatedItem, null, 2));
 
     this.itemsService.updateItem(updatedItem).subscribe(
       () => {
         alert('Item updated successfully!');
         this.showEditItemCard = false;
         this.fetchItems();
-        this.router.navigate(['/items']);
       },
       (error) => {
-        console.error('Error updating item:', error);
-        const errorMessage = error.error?.message || 'Invalid data. Please check the form (e.g., Category, Brand ID, Supplier ID) and try again.';
-        alert(`Failed to update item: ${errorMessage}`);
+        console.error('Error updating item:', JSON.stringify(error, null, 2));
+        let errorMessage = 'Failed to update item: Invalid data. Please check the form (e.g., Category, Brand ID, Supplier ID, Images) and try again.';
+        if (error.status === 400 && error.error?.message) {
+          errorMessage = `Failed to update item: ${error.error.message}`;
+        } else if (error.status) {
+          errorMessage = `Failed to update item: HTTP ${error.status} - ${error.statusText}`;
+        }
+        alert(errorMessage);
       }
     );
   }
 
   onSubmit() {
-    if (this.itemForm.invalid) {
-      alert('Please fill in all required fields.');
-      return;
-    }
-
     const formValue = this.itemForm.value;
-    const brandId = parseInt(formValue.brandId, 10);
     const supplierId = parseInt(formValue.supplierId, 10);
 
-    if (isNaN(brandId) || brandId <= 0) {
-      alert('Invalid Brand ID. Please select a valid brand.');
-      return;
-    }
-
-    if (isNaN(supplierId) || supplierId <= 0) {
-      alert('Invalid Supplier ID. Please select a valid supplier.');
-      return;
-    }
-
-    if (!this.suppliers.some(s => s.sid === supplierId)) {
-      alert('Selected Supplier ID does not exist.');
-      return;
-    }
-
     const requestBody = {
-      item_name: formValue.name.trim(),
-      description: formValue.description.trim(),
-      category: formValue.category.trim(),
-      brand_id: brandId,
-      isorganic: formValue.isOrganic === 'true' ? 1 : 0,
+      name: formValue.name,
+      description: formValue.description,
+      category: formValue.category,
+      brand_id: formValue.brandId,
+      images: formValue.images.split(',').map((url: string) => url.trim()),
+      isorganic: formValue.isOrganic,
       supplier_id: supplierId
     };
 
-    console.log('Form values:', formValue);
-    console.log('Sending add item payload:', requestBody);
-
     this.itemsService.addItem(requestBody).subscribe(
-      () => {
+      (response) => {
+        console.log('Item added successfully:', response);
         alert('Item added successfully!');
         this.itemForm.reset();
         this.itemForm.patchValue({ isOrganic: 'false' });
@@ -486,12 +544,10 @@ export class ItemsComponent implements OnInit {
       },
       (error) => {
         console.error('Error adding item:', error);
-        const errorMessage = error.error?.message || 'Invalid data. Please check the form and try again.';
-        alert(`Failed to add item: ${errorMessage}`);
+        alert('Failed to add item. Please try again.');
       }
     );
   }
-
 
   deleteItem(id: number) {
     if (!confirm('Are you sure you want to delete this item?')) {
@@ -501,7 +557,7 @@ export class ItemsComponent implements OnInit {
     this.itemsService.deleteItem(id).subscribe(
       () => {
         alert('Item deleted successfully!');
-        this.fetchItems(); // Refresh the list after deletion
+        this.fetchItems();
       },
       (error) => {
         console.error('Error deleting item:', error);
@@ -509,5 +565,4 @@ export class ItemsComponent implements OnInit {
       }
     );
   }
-  
 }
