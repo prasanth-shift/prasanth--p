@@ -1,0 +1,36 @@
+<div class="container">
+    <h2>Search User by ID</h2>
+    
+    <!-- Input field to enter User ID and search button -->
+    <input type="text" [(ngModel)]="uid" placeholder="Enter User ID">
+    <button (click)="searchUser()">Search</button>
+  
+    <!-- User profile section -->
+    <div class="section" *ngIf="userProfile">
+      <h3>User Profile</h3>
+      <p><strong>Name:</strong> {{ userProfile.name }}</p>
+      <p><strong>Email:</strong> {{ userProfile.email }}</p>
+      <p><strong>Mobile:</strong> {{ userProfile.mobile }}</p>
+      <p><strong>Alt Mobile:</strong> {{ userProfile.altMobile }}</p>
+      <p><strong>UID:</strong> {{ userProfile.uid }}</p>
+      
+      <!-- Button to fetch order list -->
+      <button *ngIf="userProfile" (click)="fetchOrders()">Show Orders</button>
+    </div>
+  
+    <!-- Order list section -->
+    <div class="section" *ngIf="orders.length > 0">
+      <h3>Order List</h3>
+      <div *ngFor="let order of orders" class="order">
+        <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+        <p><strong>Item:</strong> {{ order.name }}</p>
+        <p><strong>Quantity:</strong> {{ order.quantity }} {{ order.units }}</p>
+        <p><strong>Price:</strong> ₹{{ order.price }}</p>
+        <p><strong>Status:</strong> {{ order.order_status }}</p>
+      </div>
+    </div>
+  
+    <!-- Error Message Section -->
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  </div>
+  

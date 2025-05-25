@@ -1,0 +1,419 @@
+.debug-info {
+    font-size: 18px;
+    color: #ff4500;
+    margin: 10px 0;
+    font-weight: bold;
+    background-color: #fff3cd;
+    padding: 10px;
+    border: 1px solid #ffeeba;
+  }
+  .header-section {
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: left;
+  }
+  .items-root {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .form-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .form-row {
+    display: contents;
+  }
+  .field {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #218838;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  textarea {
+    height: 100px;
+  }
+  .add-button {
+    grid-column: span 2;
+    background-color: #4caf50;
+    color: white;
+    padding: 6px 10px;
+    max-width: fit-content;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    margin: 30px;
+  }
+  .add-button:hover {
+    background-color: #45a049;
+  }
+  .table-container {
+    max-height: 70vh;
+    overflow-y: auto;
+    display: block;
+  }
+  .item-table {
+    display: block;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .item-table thead {
+    display: table-header-group;
+    position: sticky;
+    top: 0;
+    background-color: green;
+    z-index: 1000;
+  }
+  .item-table th {
+    background-color: green;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  .item-table td {
+    padding: 10px;
+    border: 1px solid lightgray;
+  }
+  .hover-row {
+    background-color: #f1f1f1;
+  }
+  .actions-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+  }
+  .edit-button {
+    background-color: #4caf50;
+    color: white;
+    padding: 8px 14px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    margin: 3px;
+  }
+  .edit-button:hover {
+    background-color: #45a049;
+  }
+  .delete-button {
+    background-color: #ff0000 !important;
+    color: white !important;
+    padding: 10px 16px !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    border: none !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+    margin: 3px !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    z-index: 1000 !important;
+    min-width: 120px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  .delete-button:hover {
+    background-color: #cc0000 !important;
+  }
+  @media screen and (max-width: 768px) {
+    .form-container {
+      grid-template-columns: 1fr;
+    }
+    .add-button {
+      grid-column: span 2;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+    .table-container {
+      max-height: calc(100vh - 150px);
+    }
+    .actions-cell {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .delete-button {
+      width: 100%;
+      min-width: unset;
+    }
+  }
+  .confirmation-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    background-color: #fff;
+    max-width: 300px;
+    margin: 20px auto;
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+  }
+  .confirmation-card h3 {
+    color: #333;
+  }
+  .confirmation-card p {
+    color: #555;
+    margin-bottom: 20px;
+  }
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+  }
+  .ok-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .cancel-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .ok-button:hover {
+    background-color: #218838;
+  }
+  .cancel-button:hover {
+    background-color: #c82333;
+  }
+  .edit-sub-item-card {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 1000;
+  }
+  .edit-sub-item-card h3 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-align: center;
+  }
+  .sub-item-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .sub-item-table th,
+  .sub-item-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  .sub-item-table th {
+    background-color: #007bff;
+    color: white;
+  }
+  .sub-item-table td {
+    background-color: #f5f5f5;
+  }
+  .close-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 4px;
+    margin-top: 30px;
+    cursor: pointer;
+    height: fit-content;
+    width: fit-content;
+  }
+  .close-button:hover {
+    background-color: #c82333;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+    }
+    .edit-sub-item-card {
+      width: 90%;
+    }
+  }
+  .add-pincode-card {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  .add-pincode-card h3 {
+    margin-bottom: 20px;
+  }
+  .add-pincode-card .form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  .add-pincode-card .field {
+    flex: 1;
+  }
+  .add-pincode-card .field label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .add-pincode-card .field input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .add-pincode-card .button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  .add-pincode-card .add-button,
+  .add-pincode-card .close-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .add-pincode-card .add-button {
+    background-color: #28a745;
+    color: white;
+  }
+  .suggestion-box {
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    padding: 10px;
+  }
+  .suggestion-box input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  .pincode-list div {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .pincode-list label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .pincode-list input[type="checkbox"] {
+    cursor: pointer;
+    transform: scale(1.2);
+    margin-right: 5px;
+  }
+  .modal-overlay {
+    z-index: 1050 !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+  }
+  .modal-content {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    width: 300px;
+    text-align: center;
+  }
+  .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .rounded-button,
+  .cancel-button {
+    padding: 6px 10px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+  .rounded-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  .cancel-button {
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  .edit-item-card {
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 1000;
+  }
+  .error-message {
+    color: red;
+    margin-bottom: 10px;
+  }
+  .error {
+    color: red;
+    font-size: 12px;
+  }

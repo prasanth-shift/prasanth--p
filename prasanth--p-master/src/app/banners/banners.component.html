@@ -1,0 +1,28 @@
+<div class="banner-container">
+  <h2 class="banner-heading">Banners</h2>
+  <div class="banner-url-container">
+    <label for="banner-url">Banner URL:</label>
+    <input type="text" id="banner-url" [(ngModel)]="bannerUrl" placeholder="Enter banner URL" />
+  </div>
+  <div class="status-container">
+    <label for="banner-status">Status:</label>
+    <select id="banner-status" [(ngModel)]="bannerStatus">
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+  <button (click)="saveBanner()" class="rounded-button">Save</button>
+</div>
+<!-- Banner list -->
+<div *ngIf="banners?.length" class="banner-list">
+  <div *ngFor="let b of banners" class="banner-card">
+    <img [src]="b.banner_image" alt="banner" class="thumb" />
+
+    <span class="pill" [ngClass]="b.status">{{ b.status }}</span>
+
+    <button (click)="editBanner(b)">Edit</button>
+<button (click)="deleteBanner(b.banner_id)">Delete</button> 
+
+  </div>
+</div>
+

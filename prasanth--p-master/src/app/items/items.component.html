@@ -1,0 +1,398 @@
+<!-- Form to Add Item -->
+<h2>Add Items</h2>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" class="form-container">
+  <div class="form-row">
+    <div class="field">
+      <label for="name">Name:</label>
+      <input id="name" formControlName="name" type="text" aria-required="true" />
+      <div *ngIf="itemForm.get('name')?.invalid && itemForm.get('name')?.touched" class="error">
+        Name is required.
+      </div>
+    </div>
+    <div class="field">
+      <label for="description">Description:</label>
+      <textarea id="description" formControlName="description" aria-describedby="description-help"></textarea>
+      <small id="description-help">Optional description of the item.</small>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="field">
+      <label for="category">Category:</label>
+      <input id="category" formControlName="category" type="text" />
+    </div>
+    <div class="field">
+      <label for="brandId">Brand ID:</label>
+      <input id="brandId" formControlName="brandId" type="number" />
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="field">
+      <label for="images">Images (comma-separated URLs):</label>
+      <input id="images" formControlName="images" type="text" />
+    </div>
+    <div class="field">
+      <label for="isOrganic">Is Organic:</label>
+      <select id="isOrganic" formControlName="isOrganic" aria-label="Is Organic">
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="field">
+      <label for="supplierId">Supplier ID:</label>
+      <select id="supplierId" formControlName="supplierId" aria-required="true">
+        <option value="">Select a supplier</option>
+        <option *ngFor="let supplier of suppliers" [value]="supplier.sid">{{ supplier.sid }}</option>
+      </select>
+      <div *ngIf="itemForm.get('supplierId')?.invalid && itemForm.get('supplierId')?.touched" class="error">
+        Supplier ID is required.
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="add-button" [disabled]="itemForm.invalid" aria-label="Add New Item">Add New Item</button>
+</form>
+
+<div>
+  <input
+    type="text"
+    placeholder="Enter pincodes (comma or space separated)"
+    [(ngModel)]="pincodeInput"
+  />
+  <button (click)="adddPincode()">Add Pincode(s)</button>
+</div>
+
+     
+
+<!-- Table to display items -->
+<table class="item-table">
+  <thead>
+    <tr>
+      <th>Item ID</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Category</th>
+      <th>Brand ID</th>
+      <th>Is Organic</th>
+      <th>Supplier ID</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of items; let i = index" [ngClass]="{ 'hover-row': i % 2 === 0 }">
+      <td>{{ item.item_id }}</td>
+      <td>{{ item.name || item.item_name || '-' }}</td>
+      <td>{{ item.description || '-' }}</td>
+      <td>{{ item.category || '-' }}</td>
+      <td>{{ item.brand_id || item.brandId || '-' }}</td>
+      <td>{{ (item.isorganic ?? item.isOrganic) ? 'Yes' : 'No' }}</td>
+      <td>{{ item.supplier_id || item.supplierId || '-' }}</td>
+      <td>
+        <button class="edit-button" (click)="showConfirmation(item.item_id)" aria-label="Add Sub-Item">Add Sub-Item</button>
+        <button class="edit-button" (click)="openEditSubItemCard(item.item_id)" aria-label="Edit Sub-Item">Edit Sub-Item</button>
+        <button class="edit-button" (click)="openAddPincodeCard(item.item_id)" aria-label="Add Pincode">Add Pincode</button>
+        <button class="edit-button" (click)="openRemovePincodeCard(item.item_id)" aria-label="Remove Pincode">Remove Pincode</button>
+        <button class="edit-button" (click)="openEditItemCard(item.item_id)" [disabled]="isLoadingItems" aria-label="Edit Item">Edit Item</button>
+        <button class="edit-button" (click)="deleteItem(item.item_id)" aria-label="Delete Item">Delete Item</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Confirmation Card -->
+<div *ngIf="showConfirmationCard" class="confirmation-card">
+  <h3>Want to add sub-items?</h3>
+  <p>In that case, please note the Item ID: <strong>{{ selectedItemId }}</strong></p>
+  <div class="button-group">
+    <button class="ok-button" (click)="openSubItemModal()" aria-label="Confirm Add Sub-Item">OK</button>
+    <button class="cancel-button" (click)="closeConfirmationCard()" aria-label="Cancel">Cancel</button>
+  </div>
+</div>
+
+<!-- Edit Sub-Item Card -->
+<div *ngIf="showEditSubItemCard" class="edit-sub-item-card">
+  <h3>Edit Sub-Items</h3>
+  <table class="sub-item-table">
+    <thead>
+      <tr>
+        <th>IQ ID</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Discount</th>
+        <th>Units</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let subItem of subItems">
+        <td>{{ subItem.iqu_id }}</td>
+        <td>{{ subItem.quantity }}</td>
+        <td>{{ subItem.price }}</td>
+        <td>{{ subItem.discount || '-' }}</td>
+        <td>{{ subItem.units }}</td>
+        <td>
+          <button class="edit-button" (click)="openEditSubItemDetails(subItem)" aria-label="Edit Sub-Item">Edit</button>
+          <button class="delete-button" (click)="deleteSubItem(subItem.iqu_id)" aria-label="Delete Sub-Item">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="button-group">
+    <button class="close-button" (click)="closeEditSubItemCard()" aria-label="Close">Close</button>
+  </div>
+</div>
+
+<!-- Edit Sub-Item Details Card -->
+<div *ngIf="showEditSubItemDetailsCard" class="edit-sub-item-card">
+  <h3>Edit Sub-Item Details</h3>
+  <form [formGroup]="subItemForm" (ngSubmit)="onUpdateSubItem()">
+    <div class="form-row">
+      <div class="field">
+        <label for="quantity">Quantity:</label>
+        <input id="quantity" formControlName="quantity" type="number" aria-required="true" />
+        <div *ngIf="subItemForm.get('quantity')?.invalid && subItemForm.get('quantity')?.touched" class="error">
+          Quantity is required.
+        </div>
+      </div>
+      <div class="field">
+        <label for="price">Price:</label>
+        <input id="price" formControlName="price" type="number" aria-required="true" />
+        <div *ngIf="subItemForm.get('price')?.invalid && subItemForm.get('price')?.touched" class="error">
+          Price is required.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label for="discount">Discount:</label>
+        <input id="discount" formControlName="discount" type="number" />
+      </div>
+      <div class="field">
+        <label for="units">Units:</label>
+        <input id="units" formControlName="units" type="number" aria-required="true" />
+        <div *ngIf="subItemForm.get('units')?.invalid && subItemForm.get('units')?.touched" class="error">
+          Units are required.
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" class="edit-button" [disabled]="subItemForm.invalid" aria-label="Update Sub-Item">Update</button>
+      <button type="button" class="close-button" (click)="closeEditSubItemDetailsCard()" aria-label="Cancel">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- Add Pincode Card -->
+<div *ngIf="showAddPincodeCard" class="add-pincode-card">
+  <h3>Add Pincode</h3>
+  <form [formGroup]="pincodeForm" (ngSubmit)="onAddPincode()">
+    <div class="form-row">
+      <div class="field">
+        <label for="itemId">Item ID:</label>
+        <input id="itemId" formControlName="itemId" type="number" disabled aria-disabled="true" />
+      </div>
+
+      <div class="field">
+        <label for="pincode">Pincode:</label>
+        <input
+          id="pincode"
+          formControlName="pincode"
+          type="text"
+          placeholder="Select pincodes"
+          (focus)="onPincodeFocus()"
+          aria-describedby="pincode-help"
+        />
+        <small id="pincode-help">Select one or more pincodes from the list below.</small>
+
+        <div class="suggestion-box" *ngIf="showSuggestions">
+          <input
+            id="pincodeSearch"
+            formControlName="pincodeSearch"
+            type="text"
+            placeholder="Search pincodes..."
+            (input)="filterPincodes()"
+            aria-label="Search pincodes"
+          />
+
+          <div class="pincode-list">
+            <div *ngFor="let pincode of filteredPincodes">
+              <label>
+                <input
+                  type="checkbox"
+                  [checked]="selectedPincodes.has(pincode)"
+                  (change)="togglePincodeSelection(pincode)"
+                  aria-label="Select pincode {{ pincode }}"
+                />
+                {{ pincode }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" class="add-button" aria-label="Add Pincode">Add</button>
+      <button type="button" class="close-button" (click)="closeAddPincodeCard()" aria-label="Cancel">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- Remove Pincode Card -->
+<div *ngIf="showRemovePincodeCard" class="add-pincode-card">
+  <h3>Remove Pincode</h3>
+  <form [formGroup]="pincodeForm" (ngSubmit)="onRemovePincode()">
+    <div class="form-row">
+      <div class="field">
+        <label for="itemId">Item ID:</label>
+        <input id="itemId" formControlName="itemId" type="number" disabled aria-disabled="true" />
+      </div>
+      <div class="field">
+        <label for="pincode">Pincode:</label>
+        <input id="pincode" formControlName="pincode" type="number" aria-required="true" />
+        <div *ngIf="pincodeForm.get('pincode')?.invalid && pincodeForm.get('pincode')?.touched" class="error">
+          Pincode is required.
+        </div>
+      </div>
+    </div>
+    <div class="button-group">
+      <button type="submit" class="add-button" [disabled]="pincodeForm.invalid" aria-label="Remove Pincode">Remove</button>
+      <button type="button" class="close-button" (click)="closeRemovePincodeCard()" aria-label="Cancel">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- Sub-Item Modal -->
+<div *ngIf="isSubItemModalOpen" class="modal-overlay">
+  <div class="modal-content">
+    <h2>Add Sub-Items</h2>
+    <form #subItemForm="ngForm" (ngSubmit)="onSubmitSubItem(subItemForm)" class="form-container">
+      <div class="field">
+        <label for="itemId">Item ID:</label>
+        <input id="itemId" [(ngModel)]="subItemData.item_id" name="item_id" type="number" required aria-required="true" />
+        <div *ngIf="subItemForm.controls['item_id']?.invalid && subItemForm.controls['item_id']?.touched" class="error">
+          Item ID is required.
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="quantity">Quantity:</label>
+        <input id="quantity" [(ngModel)]="subItemData.quantity" name="quantity" type="number" step="0.01" required aria-required="true" />
+        <div *ngIf="subItemForm.controls['quantity']?.invalid && subItemForm.controls['quantity']?.touched" class="error">
+          Quantity is required.
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="price">Price:</label>
+        <input id="price" [(ngModel)]="subItemData.price" name="price" type="number" step="0.01" required aria-required="true" />
+        <div *ngIf="subItemForm.controls['price']?.invalid && subItemForm.controls['price']?.touched" class="error">
+          Price is required.
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="units">Units:</label>
+        <input id="units" [(ngModel)]="subItemData.units" name="units" type="number" required aria-required="true" />
+        <div *ngIf="subItemForm.controls['units']?.invalid && subItemForm.controls['units']?.touched" class="error">
+          Units are required.
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="discount">Discount:</label>
+        <input id="discount" [(ngModel)]="subItemData.discount" name="discount" type="number" step="0.01" aria-describedby="discount-help" />
+        <small id="discount-help">Optional discount for the sub-item.</small>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="rounded-button" [disabled]="subItemForm.invalid" aria-label="Add Sub-Item">Add Sub-Items</button>
+        <button type="button" class="cancel-button" (click)="closeSubItemModal()" aria-label="Cancel">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Item Card -->
+<div *ngIf="showEditItemCard" class="edit-item-card">
+  <h3>Edit Item Details</h3>
+  <div *ngIf="!(itemToEdit.name || itemToEdit.item_name)" class="error-message">
+    Failed to load item details. Please fill in the form manually or try again.
+  </div>
+  <form [formGroup]="ItemEditForm" (ngSubmit)="onUpdateItem()">
+    <div class="form-row">
+      <div class="field">
+        <label for="name">Name:</label>
+        <input id="name" formControlName="name" type="text" aria-required="true" />
+        <div *ngIf="ItemEditForm.get('name')?.invalid && ItemEditForm.get('name')?.touched" class="error">
+          Name is required.
+        </div>
+      </div>
+      <div class="field">
+        <label for="description">Description:</label>
+        <textarea id="description" formControlName="description" aria-required="true"></textarea>
+        <div *ngIf="ItemEditForm.get('description')?.invalid && ItemEditForm.get('description')?.touched" class="error">
+          Description is required.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label for="category">Category:</label>
+        <input id="category" formControlName="category" type="text" aria-required="true" />
+        <div *ngIf="ItemEditForm.get('category')?.invalid && ItemEditForm.get('category')?.touched" class="error">
+          Category is required.
+        </div>
+      </div>
+      <div class="field">
+        <label for="brandId">Brand ID:</label>
+        <input id="brandId" formControlName="brandId" type="number" aria-required="true" />
+        <div *ngIf="ItemEditForm.get('brandId')?.invalid && ItemEditForm.get('brandId')?.touched" class="error">
+          Brand ID is required.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label for="images">Images (comma-separated URLs):</label>
+        <input id="images" formControlName="images" type="text" />
+      </div>
+      <div class="field">
+        <label for="isOrganic">Is Organic:</label>
+        <select id="isOrganic" formControlName="isOrganic" aria-required="true">
+          <option value="true">True</option>
+          <option value="false">False</option>
+        </select>
+        <div *ngIf="ItemEditForm.get('isOrganic')?.invalid && ItemEditForm.get('isOrganic')?.touched" class="error">
+          Is Organic is required.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label for="supplierId">Supplier ID:</label>
+        <select id="supplierId" formControlName="supplierId" aria-required="true">
+          <option value="">Select a supplier</option>
+          <option *ngFor="let supplier of suppliers" [value]="supplier.sid">{{ supplier.sid }}</option>
+        </select>
+        <div *ngIf="ItemEditForm.get('supplierId')?.invalid && ItemEditForm.get('supplierId')?.touched" class="error">
+          Supplier ID is required.
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" class="edit-button" [disabled]="ItemEditForm.invalid" aria-label="Update Item">Update Item</button>
+      <button type="button" class="close-button" (click)="closeEditItemCard()" aria-label="Cancel">Cancel</button>
+    </div>
+  </form>
+</div>
