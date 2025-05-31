@@ -91,7 +91,8 @@
         <td>{{ o.order_id }}</td>
         <td>{{ o.uid }}</td>
         <td>{{ o.order_status }}</td>
-        <td>{{ o.price | currency }}</td>
+       <td>{{ o.price | currency:'INR':'symbol' }}</td>
+
         <td>{{ o.ordered_date | date: 'short' }}</td>
         <td>{{ o.delivery_address }}</td>
         <td>{{ o.payment_method }}</td>

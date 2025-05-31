@@ -23,6 +23,7 @@ import { EditsubitemsComponent } from './editsubitems/editsubitems.component';
 import { AuthInterceptor } from './auth.interceptor';
 import { RouterModule } from '@angular/router';
 import { UserInfoComponent } from './user-info/user-info.component';
+import { PincodesComponent } from './pincodes/pincodes.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { UserInfoComponent } from './user-info/user-info.component';
     LoginComponent,
     AddSubItemsComponent,
     EditsubitemsComponent,
-    UserInfoComponent
+    UserInfoComponent,
+    PincodesComponent
   ],
   imports: [
     BrowserModule,

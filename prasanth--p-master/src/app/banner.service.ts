@@ -24,6 +24,8 @@ export class BannerService {
 
   deleteBanner(bannerId: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/api/admin/banner/remove/${bannerId}`);
+
+    
   }
 
  

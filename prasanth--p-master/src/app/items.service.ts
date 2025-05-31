@@ -7,6 +7,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ItemsService {
+  // deletePincode(pin: string) {
+  //   throw new Error('Method not implemented.');
+  // }
   private baseUrl = environment.serverUrl;
 
   constructor(private http: HttpClient) {}
@@ -62,4 +65,12 @@ adddPincode(requestBody: { pincode: string[] }): Observable<any> {
     const url = `${this.baseUrl}/api/admin/pincode`;
     return this.http.put(url, requestBody);
   }
+
+  /** DELETE a pincode using request body (not URL param) */
+ deletePincode(pincode: number) {
+  return this.http.delete('http://150.242.203.100:5000/api/admin/pincode', {
+    body: { pincode: pincode }
+  });
+}
+
 }

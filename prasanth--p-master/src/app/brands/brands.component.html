@@ -32,3 +32,10 @@
     <button type="submit" class="rounded-button">Submit</button>
   </form>
 </div>
+
+<div *ngFor="let brand of brands">
+  <h3>{{ brand.name }}</h3>
+  <img *ngFor="let img of brand.images" [src]="img" alt="{{ brand.name }}" width="100" />
+  <button (click)="editBrand(brand)">Edit</button>
+  <button (click)="deleteBrand(brand.brand_id)">Delete</button>
+</div>

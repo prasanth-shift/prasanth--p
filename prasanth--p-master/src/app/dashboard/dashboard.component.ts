@@ -8,6 +8,7 @@ import { ItemsComponent } from '../items/items.component';
 import { NotificationComponent } from '../notification/notification.component';
 import { DeliveryComponent } from '../delivery/delivery.component';
 import { UserInfoComponent } from '../user-info/user-info.component';
+import { PincodesComponent } from '../pincodes/pincodes.component';
 
 
 @Component({
@@ -68,6 +69,10 @@ export class DashboardComponent {
   }
   else if (component === 'user-info') {
     this.activeComponent = UserInfoComponent; 
+     this.isSidebarOpen = true;
+  }
+    else if (component === 'pincodes') {
+    this.activeComponent = PincodesComponent; 
      this.isSidebarOpen = true;
   }
   }

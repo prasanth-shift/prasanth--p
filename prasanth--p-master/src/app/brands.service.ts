@@ -16,4 +16,18 @@ export class BrandsService {
      const url = `${this.baseUrl}/api/admin/item/brand`;
     return this.http.put(url, brand);
   }
+  
+getBrands(): Observable<any[]> {
+  const url = `${this.baseUrl}/api/admin/item/brand`;
+  return this.http.get<any[]>(url);
+}
+
+
+deleteBrand(id: number) {
+  const url = `${this.baseUrl}/api/admin/item/brand/${id}`;
+  return this.http.delete(url);
+}
+
+  
+  
 }

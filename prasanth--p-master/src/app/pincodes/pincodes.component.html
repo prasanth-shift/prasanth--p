@@ -1,0 +1,19 @@
+<div>
+  <input
+    type="text"
+    placeholder="Enter pincodes (comma or space separated)"
+    [(ngModel)]="pincodeInput"
+  />
+  <button (click)="adddPincode()">Add Pincode(s)</button>
+</div>
+
+<div *ngIf="filteredPincodes.length > 0">
+  <h3>Saved Pincodes</h3>
+  <ul>
+    <li *ngFor="let pincode of filteredPincodes">
+      {{ pincode }}
+      <button (click)="deletePincode(pincode)">Delete</button>
+    </li>
+  </ul>
+</div>
+

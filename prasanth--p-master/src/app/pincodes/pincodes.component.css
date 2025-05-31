@@ -1,0 +1,41 @@
+.pincode-container {
+  max-width: 400px;
+  margin: 0 auto;
+  font-family: system-ui, sans-serif;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.delete-btn {
+  background: none;
+  border: 0;
+  color: #d7263d;
+  cursor: pointer;
+}
+
+.add-box {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.add-box input {
+  flex: 1;
+  padding: 4px 6px;
+}
+
+.add-box button {
+  padding: 4px 10px;
+  cursor: pointer;
+}

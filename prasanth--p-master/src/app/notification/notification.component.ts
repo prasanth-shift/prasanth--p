@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '../notification.service';
 
@@ -8,7 +8,7 @@ import { NotificationService } from '../notification.service';
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.css'],
 })
-export class NotificationComponent {
+export class NotificationComponent implements OnInit {
   notificationForm: FormGroup;
 
   constructor(private fb: FormBuilder, private notificationService: NotificationService) {
@@ -17,6 +17,9 @@ export class NotificationComponent {
       notificationDescription: ['', Validators.required], // Maps to "description"
       posterUrl: ['', Validators.required], // Maps to "poster"
     });
+  }
+  ngOnInit(): void {
+   this.loadNotifications();
   }
 
   onSubmit() {
@@ -43,6 +46,32 @@ export class NotificationComponent {
     } else {
       console.log('Form is invalid');
       alert('Please fill in all required fields.');
+    }
+  }
+
+notifications: any[] = [];
+  loadNotifications() {
+    this.notificationService.getAllNotifications().subscribe(
+      (data) => {
+        this.notifications = data;
+      },
+      (error) => {
+        alert('Failed to load notifications.');
+      }
+    );
+  }
+
+  deleteNotification(id: string) {
+    if (confirm('Are you sure you want to delete this notification?')) {
+      this.notificationService.deleteNotification(id).subscribe(
+        () => {
+          alert('Notification deleted!');
+          this.loadNotifications(); // reload after delete
+        },
+        () => {
+          alert('Delete failed!');
+        }
+      );
     }
   }
 }

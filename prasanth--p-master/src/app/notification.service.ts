@@ -14,4 +14,12 @@ export class NotificationService {
   updateNotification(notification: { title: string; description: string; poster: string }): Observable<any> {
     return this.http.put(this.apiUrl, notification);
   }
+  getAllNotifications(): Observable<any[]> {
+  return this.http.get<any[]>(`http://150.242.203.100:5000/api/explore/list/notification`);
+}
+
+deleteNotification(id: string): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/notification/${id}`);
+}
+
 }
